@@ -1,0 +1,75 @@
+type Query {
+    users(nameFilter: String): [User]
+    userById(id: ID!): User
+    medications(nameFilter: String): [Medication]
+    medicationById(id: ID!): Medication
+    orders(orderStatus: OrderStatusEnum): [Order]
+    orderById(id: ID!): Order
+    medicationOrders(orderId: ID, medicationId: ID): [MedicationOrder]
+}
+
+type Mutation {
+    addUser(user: UserDto): User
+    updateUser(id: ID!, user: UserDto): User
+    deleteUser(id: ID!): Boolean
+    addMedication(medication: MedicationDto): Medication
+    updateMedication(id: ID!, medication: MedicationDto): Medication
+    deleteMedication(id: ID!): Boolean
+    addOrder(orderDto: OrderDto): Order
+    updateOrder(id: ID!, order: OrderDto): Order
+    deleteOrder(id: ID!): Boolean
+    addMedicationOrder(medicationOrder: MedicationOrderDto): MedicationOrder
+    updateMedicationOrder(id: ID!, medicationOrder: MedicationOrderDto): MedicationOrder
+    deleteMedicationOrder(id: ID!): Boolean
+}
+
+type User {
+    id: ID
+    name: String
+}
+
+input UserDto {
+    name: String!
+}
+
+type Medication {
+    id: ID
+    name: String
+    dosage: String
+    description: String
+}
+
+input MedicationDto {
+    name: String!
+    dosage: String!
+    description: String
+}
+
+type Order {
+    id: ID
+    orderStatus: OrderStatusEnum
+    user: User
+    medicationOrders: [MedicationOrder]
+}
+
+input OrderDto {
+    orderStatus: OrderStatusEnum!
+    userId: ID!
+}
+
+enum OrderStatusEnum {
+    PENDING
+    CANCELED
+    COMPLITED
+}
+
+type MedicationOrder {
+    id: ID
+    order: Order
+    medication: Medication
+}
+
+input MedicationOrderDto {
+    orderId: ID!
+    medicationId: ID!
+}
