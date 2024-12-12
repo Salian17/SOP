@@ -1,7 +1,6 @@
 package com.example.sop.dtos;
 
 import com.example.sop.enums.OrderStatusEnum;
-import com.example.sop.models.MedicationOrder;
 import com.example.sop.models.User;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -53,5 +52,15 @@ public class OrderDto extends RepresentationModel<OrderDto> {
 
     public void setOrderItems(List<MedicationOrderDto> orderItems) {
         this.orderItems = orderItems;
+    }
+
+    @Override
+    public String toString() {
+        return "\n{" +
+                "\n    id=" + id +
+                ",\n    orderStatus=" + orderStatus +
+                ",\n    user=" + user +
+                ",\n    orderItems=" + orderItems +
+                "\n}";
     }
 }

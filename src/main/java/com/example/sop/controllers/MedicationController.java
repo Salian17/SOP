@@ -3,7 +3,9 @@ package com.example.sop.controllers;
 import com.example.sop.dtos.MedicationDto;
 import com.example.sop.dtos.MedicationOrderDto;
 import com.example.sop.services.MedicationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +20,15 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/medication")
 public class MedicationController {
+    private final RabbitTemplate rabbitTemplate;
+    static final String exchangeName = "testExchange";
     final private MedicationService medicationService;
+    ObjectMapper objectMapper = new ObjectMapper();
 
-    @Autowired
-    public MedicationController(MedicationService medicationService) {
+    public MedicationController(RabbitTemplate rabbitTemplate, MedicationService medicationService, ObjectMapper objectMapper) {
+        this.rabbitTemplate = rabbitTemplate;
         this.medicationService = medicationService;
+        this.objectMapper = objectMapper;
     }
 
     @GetMapping
@@ -46,8 +52,11 @@ public class MedicationController {
     }
 
     @PostMapping("/registryMedication")
-    public EntityModel<MedicationDto> registry(@RequestBody MedicationDto medication){
+    public EntityModel<MedicationDto> registry(@RequestBody MedicationDto medication) throws JsonProcessingException {
         MedicationDto medicationDto = medicationService.registry(medication);
+        String jsonMessage = objectMapper.writeValueAsString(medicationDto);
+
+        rabbitTemplate.convertAndSend("firstQueue", jsonMessage);
         return EntityModel.of(medicationDto, linkTo(methodOn(MedicationController.class).getById(medicationDto.getId()))
                 .withSelfRel());
     }
@@ -57,6 +66,8 @@ public class MedicationController {
                 .orElseThrow(() -> new RuntimeException("Medication not found"));
 
         EntityModel<MedicationDto> medicationModel = EntityModel.of(medicationDto);
+
+        rabbitTemplate.convertAndSend(exchangeName, "my.key",medicationDto.toString());
 
         medicationModel.add(linkTo(methodOn(MedicationController.class).getById(id)).withSelfRel());
         medicationModel.add(linkTo(methodOn(MedicationController.class).update(id ,medicationDto)).withRel("update"));

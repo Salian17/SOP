@@ -2,6 +2,7 @@ package com.example.sop.controllers;
 
 import com.example.sop.dtos.MedicationOrderDto;
 import com.example.sop.services.MedicationOrderService;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +16,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/medicationOrder")
 public class MedicationOrderController {
+    private final RabbitTemplate rabbitTemplate;
+    static final String exchangeName = "testExchange";
     private final MedicationOrderService medicationOrderService;
 
-    public MedicationOrderController(MedicationOrderService medicationOrderService) {
+    public MedicationOrderController(RabbitTemplate rabbitTemplate, MedicationOrderService medicationOrderService) {
+        this.rabbitTemplate = rabbitTemplate;
         this.medicationOrderService = medicationOrderService;
     }
 
@@ -47,6 +51,7 @@ public class MedicationOrderController {
     @PostMapping("/registryMedicationOrder")
     public EntityModel<MedicationOrderDto> createMedicationOrder(@RequestBody MedicationOrderDto medicationOrderDto) {
         MedicationOrderDto createdMedicationOrder = medicationOrderService.registry(medicationOrderDto);
+        rabbitTemplate.convertAndSend(exchangeName, "my.key",createdMedicationOrder.toString());
         return EntityModel.of(createdMedicationOrder, linkTo(methodOn(MedicationOrderController.class).getById(createdMedicationOrder.getId())).withSelfRel());
     }
 

@@ -3,6 +3,9 @@ package com.example.sop.controllers;
 import com.example.sop.dtos.MedicationOrderDto;
 import com.example.sop.dtos.OrderDto;
 import com.example.sop.services.OrderService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +20,16 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/order")
 public class OrderController {
+    private final RabbitTemplate rabbitTemplate;
+    static final String exchangeName = "testExchange";
     private final OrderService orderService;
+    private ObjectMapper objectMapper;
 
-    public OrderController(OrderService orderService) {
+    @Autowired
+    public OrderController(RabbitTemplate rabbitTemplate, OrderService orderService, ObjectMapper objectMapper) {
+        this.rabbitTemplate = rabbitTemplate;
         this.orderService = orderService;
+        this.objectMapper = objectMapper;
     }
 
     @GetMapping("/{id}")
@@ -29,6 +38,8 @@ public class OrderController {
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
         EntityModel<OrderDto> orderModel = EntityModel.of(orderDto);
+
+        rabbitTemplate.convertAndSend(exchangeName, "my.key",orderDto.toString());
 
         orderModel.add(linkTo(methodOn(OrderController.class).getById(id)).withSelfRel());
 
@@ -57,8 +68,19 @@ public class OrderController {
     @PostMapping("/registryOrder")
     public EntityModel<OrderDto> createOrder(@RequestBody OrderDto orderDto) {
         OrderDto createdOrder = orderService.registry(orderDto);
+        sendOrder(orderDto);
         return EntityModel.of(createdOrder, linkTo(methodOn(OrderController.class).getById(createdOrder.getId()))
                 .withSelfRel());
+    }
+
+    public void sendOrder(OrderDto orderDto) {
+        try {
+            // Сериализация объекта OrderDto в JSON
+            String message = objectMapper.writeValueAsString(orderDto);
+            rabbitTemplate.convertAndSend("firstQueue", message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @PutMapping("/update/{id}")

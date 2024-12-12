@@ -3,6 +3,7 @@ package com.example.sop.controllers;
 import com.example.sop.dtos.OrderDto;
 import com.example.sop.dtos.UserDto;
 import com.example.sop.services.UserService;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +18,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    private final RabbitTemplate rabbitTemplate;
+    static final String exchangeName = "testExchange";
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    public UserController(RabbitTemplate rabbitTemplate, UserService userService) {
+        this.rabbitTemplate = rabbitTemplate;
         this.userService = userService;
     }
 
@@ -29,6 +33,8 @@ public class UserController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         EntityModel<UserDto> userModel = EntityModel.of(userDto);
+
+        rabbitTemplate.convertAndSend(exchangeName, "my.key",userDto.toString());
 
         userModel.add(linkTo(methodOn(UserController.class).getUserById(id)).withSelfRel());
         userModel.add(linkTo(methodOn(UserController.class).getUserOrders(id)).withRel("orders"));
@@ -60,7 +66,9 @@ public class UserController {
     @PostMapping("/registryUser")
     public EntityModel<UserDto> createUser(@RequestBody UserDto userDto) {
         UserDto createdUser = userService.registry(userDto);
-        return EntityModel.of(createdUser, linkTo(methodOn(UserController.class).getUserById(createdUser.getId())).withSelfRel());
+        rabbitTemplate.convertAndSend(exchangeName, "my.key",createdUser.toString());
+        return EntityModel.of(createdUser, linkTo(methodOn(UserController.class).getUserById(createdUser.getId()))
+                .withSelfRel());
     }
 
     @PutMapping("/update/{id}")

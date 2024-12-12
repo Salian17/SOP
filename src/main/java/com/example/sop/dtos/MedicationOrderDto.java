@@ -1,7 +1,7 @@
 package com.example.sop.dtos;
 
-import com.example.sop.models.Medication;
-import com.example.sop.models.Order;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.hateoas.RepresentationModel;
 
 public class MedicationOrderDto extends RepresentationModel<MedicationOrderDto> {
@@ -39,5 +39,14 @@ public class MedicationOrderDto extends RepresentationModel<MedicationOrderDto> 
 
     public void setMedication(MedicationDto medication) {
         this.medication = medication;
+    }
+
+    @Override
+    public String toString() {
+        return "\nMedicationOrderDto{" +
+                "\n   id=" + id +
+                ",\n    order=" + order +
+                ",\n    medication=" + medication +
+                "\n}";
     }
 }

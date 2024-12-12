@@ -1,8 +1,6 @@
 package com.example.sop.datafetchers;
 
 import com.example.sop.dtos.OrderDto;
-import com.example.sop.enums.OrderStatusEnum;
-import com.example.sop.models.MedicationOrder;
 import com.example.sop.models.Order;
 import com.example.sop.repositories.OrderRepository;
 import com.netflix.graphql.dgs.DgsComponent;
@@ -12,7 +10,6 @@ import com.netflix.graphql.dgs.InputArgument;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
 
 @DgsComponent
 public class OrderDataFetcher {

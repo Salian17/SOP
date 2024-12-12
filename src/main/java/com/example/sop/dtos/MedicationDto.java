@@ -1,5 +1,6 @@
 package com.example.sop.dtos;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.util.List;
@@ -59,5 +60,16 @@ public class MedicationDto extends RepresentationModel<MedicationDto> {
 
     public void setMedicationOrders(List<MedicationOrderDto> medicationOrders) {
         this.medicationOrders = medicationOrders;
+    }
+
+    @Override
+    public String toString() {
+        return "\nMedicationDto{" +
+                "\n    id=" + id +
+                ",\n    name='" + name + '\'' +
+                ",\n    dosage='" + dosage + '\'' +
+                ",\n    description='" + description + '\'' +
+                ",\n    medicationOrders=" + medicationOrders +
+                "\n }";
     }
 }

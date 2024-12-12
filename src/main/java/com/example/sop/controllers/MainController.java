@@ -1,8 +1,9 @@
 package com.example.sop.controllers;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.hateoas.Link;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 public class MainController {
+    private final RabbitTemplate rabbitTemplate;
+    static final String exchangeName = "testExchange";
+
+    public MainController(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
+
     @GetMapping("/")
     public List<Link> index() {
         List<Link> links = new ArrayList<>();
@@ -28,5 +36,12 @@ public class MainController {
 
 
         return links;
+    }
+
+    @PostMapping("/message")
+    public ResponseEntity<String> sendMessageToQ1(@RequestBody String message){
+        rabbitTemplate.convertAndSend(exchangeName, "my.key",message);
+
+        return ResponseEntity.ok().body("Send to Q1!");
     }
 }
