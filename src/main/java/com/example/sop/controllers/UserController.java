@@ -34,7 +34,7 @@ public class UserController {
 
         EntityModel<UserDto> userModel = EntityModel.of(userDto);
 
-        rabbitTemplate.convertAndSend(exchangeName, "my.key",userDto.toString());
+//        rabbitTemplate.convertAndSend(exchangeName, "my.key",userDto.toString());
 
         userModel.add(linkTo(methodOn(UserController.class).getUserById(id)).withSelfRel());
         userModel.add(linkTo(methodOn(UserController.class).getUserOrders(id)).withRel("orders"));
@@ -57,16 +57,16 @@ public class UserController {
     }
 
     @GetMapping("/{id}/orders")
-    public List<OrderDto> getUserOrders(@PathVariable Long id) {
+    public List<Long> getUserOrders(@PathVariable Long id) {
         return userService.getById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"))
-                .getOrder();
+                .getOrderId();
     }
 
     @PostMapping("/registryUser")
     public EntityModel<UserDto> createUser(@RequestBody UserDto userDto) {
         UserDto createdUser = userService.registry(userDto);
-        rabbitTemplate.convertAndSend(exchangeName, "my.key",createdUser.toString());
+//        rabbitTemplate.convertAndSend(exchangeName, "my.key",createdUser.toString());
         return EntityModel.of(createdUser, linkTo(methodOn(UserController.class).getUserById(createdUser.getId()))
                 .withSelfRel());
     }

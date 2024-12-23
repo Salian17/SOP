@@ -10,6 +10,7 @@ public class Medication {
     private String name;
     private String dosage;
     private String description;
+    private double cost;
     private List<MedicationOrder> medicationOrders;
 
     protected Medication() {
@@ -47,6 +48,14 @@ public class Medication {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public double getCost() {
+        return cost;
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
     }
 
     @OneToMany(mappedBy = "medication")

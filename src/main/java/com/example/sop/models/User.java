@@ -9,7 +9,6 @@ import java.util.List;
 public class User {
     private Long id;
     private String name;
-
     private List<Order> order;
 
     protected User() {

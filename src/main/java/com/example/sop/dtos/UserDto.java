@@ -1,6 +1,5 @@
 package com.example.sop.dtos;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.util.List;
@@ -8,13 +7,13 @@ import java.util.List;
 public class UserDto extends RepresentationModel<UserDto> {
     private Long id;
     private String name;
-    private List<OrderDto> order;
+    private List<Long> orderId;
     protected UserDto() {}
 
-    public UserDto(Long id, String name, List<OrderDto> order) {
+    public UserDto(Long id, String name, List<Long> orderId) {
         this.id = id;
         this.name = name;
-        this.order = order;
+        this.orderId = orderId;
     }
 
     public Long getId() {
@@ -33,20 +32,20 @@ public class UserDto extends RepresentationModel<UserDto> {
         this.name = name;
     }
 
-    public List<OrderDto> getOrder() {
-        return order;
+    public List<Long> getOrderId() {
+        return orderId;
     }
 
-    public void setOrder(List<OrderDto> order) {
-        this.order = order;
+    public void setOrderId(List<Long> orderId) {
+        this.orderId = orderId;
     }
 
     @Override
     public String toString() {
-        return "\n{" +
-                "\n    id=" + id +
-                ",\n    name='" + name + '\'' +
-                ",\n    order=" + order +
-                "\n}";
+        return "UserDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", orderId=" + orderId +
+                '}';
     }
 }

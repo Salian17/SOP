@@ -45,18 +45,18 @@ public class MedicationController {
     }
 
     @GetMapping("/{id}/medicationOrder")
-    public List<MedicationOrderDto> getMedicationOrders(@PathVariable Long id) {
+    public List<Long> getMedicationOrders(@PathVariable Long id) {
         return medicationService.getById(id)
                 .orElseThrow(() -> new RuntimeException("Medication not found"))
-                .getMedicationOrders();
+                .getMedicationOrdersId();
     }
 
     @PostMapping("/registryMedication")
     public EntityModel<MedicationDto> registry(@RequestBody MedicationDto medication) throws JsonProcessingException {
         MedicationDto medicationDto = medicationService.registry(medication);
-        String jsonMessage = objectMapper.writeValueAsString(medicationDto);
+//        String jsonMessage = objectMapper.writeValueAsString(medicationDto);
 
-        rabbitTemplate.convertAndSend("firstQueue", jsonMessage);
+//        rabbitTemplate.convertAndSend("firstQueue", jsonMessage);
         return EntityModel.of(medicationDto, linkTo(methodOn(MedicationController.class).getById(medicationDto.getId()))
                 .withSelfRel());
     }

@@ -36,7 +36,6 @@ public class Order {
     }
 
     @ManyToOne
-    @JoinColumn(name = "customer_id", nullable = false)
     public User getUser() {
         return user;
     }

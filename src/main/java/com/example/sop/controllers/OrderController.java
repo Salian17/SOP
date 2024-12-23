@@ -59,23 +59,22 @@ public class OrderController {
     }
 
     @GetMapping("/{id}/medicationOrder")
-    public List<MedicationOrderDto> getMedicationOrders(@PathVariable Long id) {
+    public List<Long> getMedicationOrders(@PathVariable Long id) {
         return orderService.getById(id)
                 .orElseThrow(()-> new RuntimeException("Order not found"))
-                .getOrderItems();
+                .getOrderId();
     }
 
     @PostMapping("/registryOrder")
     public EntityModel<OrderDto> createOrder(@RequestBody OrderDto orderDto) {
         OrderDto createdOrder = orderService.registry(orderDto);
-        sendOrder(orderDto);
+//        sendOrder(orderDto);
         return EntityModel.of(createdOrder, linkTo(methodOn(OrderController.class).getById(createdOrder.getId()))
                 .withSelfRel());
     }
 
     public void sendOrder(OrderDto orderDto) {
         try {
-            // Сериализация объекта OrderDto в JSON
             String message = objectMapper.writeValueAsString(orderDto);
             rabbitTemplate.convertAndSend("firstQueue", message);
         } catch (Exception e) {
@@ -94,13 +93,6 @@ public class OrderController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<OrderDto> deleteOrder(@PathVariable Long id) {
         orderService.delete(id);
-
-        OrderDto updateOrder = orderService.getById(id)
-                .map(orderDto -> {
-                    orderDto.add(linkTo(methodOn(OrderController.class).getById(id))
-                            .withSelfRel());
-                    return orderDto;
-                }).orElseThrow(() -> new IllegalArgumentException("Order not found"));
-        return ResponseEntity.ok(updateOrder);
+        return ResponseEntity.noContent().build();
     }
 }

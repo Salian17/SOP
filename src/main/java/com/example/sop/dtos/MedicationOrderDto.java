@@ -1,20 +1,19 @@
 package com.example.sop.dtos;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.hateoas.RepresentationModel;
 
 public class MedicationOrderDto extends RepresentationModel<MedicationOrderDto> {
     private Long id;
-    private OrderDto order;
-    private MedicationDto medication;
+    private Long orderId;
+    private Long medicationId;
 
     protected MedicationOrderDto() {}
 
-    public MedicationOrderDto(Long id, OrderDto order, MedicationDto medication) {
+    public MedicationOrderDto(Long id, Long orderId, Long medicationId) {
         this.id = id;
-        this.order = order;
-        this.medication = medication;
+        this.orderId = orderId;
+        this.medicationId = medicationId;
     }
 
     public Long getId() {
@@ -25,28 +24,28 @@ public class MedicationOrderDto extends RepresentationModel<MedicationOrderDto> 
         this.id = id;
     }
 
-    public OrderDto getOrder() {
-        return order;
+    public Long getOrderId() {
+        return orderId;
     }
 
-    public void setOrder(OrderDto order) {
-        this.order = order;
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 
-    public MedicationDto getMedication() {
-        return medication;
+    public Long getMedicationId() {
+        return medicationId;
     }
 
-    public void setMedication(MedicationDto medication) {
-        this.medication = medication;
+    public void setMedicationId(Long medicationId) {
+        this.medicationId = medicationId;
     }
 
     @Override
     public String toString() {
-        return "\nMedicationOrderDto{" +
-                "\n   id=" + id +
-                ",\n    order=" + order +
-                ",\n    medication=" + medication +
-                "\n}";
+        return "MedicationOrderDto{" +
+                "id=" + id +
+                ", orderId=" + orderId +
+                ", medicationId=" + medicationId +
+                '}';
     }
 }

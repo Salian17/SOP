@@ -22,7 +22,6 @@ public class MedicationOrder {
     }
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
     public Order getOrder() {
         return order;
     }
@@ -32,7 +31,6 @@ public class MedicationOrder {
     }
 
     @ManyToOne
-    @JoinColumn(name = "medication_id")
     public Medication getMedication() {
         return medication;
     }

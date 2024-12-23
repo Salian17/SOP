@@ -1,25 +1,23 @@
 package com.example.sop.dtos;
 
 import com.example.sop.enums.OrderStatusEnum;
-import com.example.sop.models.User;
-import org.springframework.hateoas.RepresentationModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderDto extends RepresentationModel<OrderDto> {
+public class OrderDto {
     private Long id;
     private OrderStatusEnum orderStatus;
-    private User user;
-    private List<MedicationOrderDto> orderItems = new ArrayList<>();
+    private Long userId;
+    private List<Long> orderId = new ArrayList<>();
 
     protected OrderDto() {}
 
-    public OrderDto(Long id, OrderStatusEnum orderStatus, User user, List<MedicationOrderDto> orderItems) {
+    public OrderDto(Long id, OrderStatusEnum orderStatus, Long userId, List<Long> orderId) {
         this.id = id;
         this.orderStatus = orderStatus;
-        this.user = user;
-        this.orderItems = orderItems;
+        this.userId = userId;
+        this.orderId = orderId;
     }
 
     public Long getId() {
@@ -38,29 +36,29 @@ public class OrderDto extends RepresentationModel<OrderDto> {
         this.orderStatus = orderStatus;
     }
 
-    public User getUser() {
-        return user;
+    public long getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
-    public List<MedicationOrderDto> getOrderItems() {
-        return orderItems;
+    public List<Long> getOrderId() {
+        return orderId;
     }
 
-    public void setOrderItems(List<MedicationOrderDto> orderItems) {
-        this.orderItems = orderItems;
+    public void setOrderId(List<Long> orderId) {
+        this.orderId = orderId;
     }
 
     @Override
     public String toString() {
-        return "\n{" +
-                "\n    id=" + id +
-                ",\n    orderStatus=" + orderStatus +
-                ",\n    user=" + user +
-                ",\n    orderItems=" + orderItems +
-                "\n}";
+        return "OrderDto{" +
+                "id=" + id +
+                ", orderStatus=" + orderStatus +
+                ", userId=" + userId +
+                ", orderId=" + orderId +
+                '}';
     }
 }

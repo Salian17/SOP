@@ -1,6 +1,5 @@
 package com.example.sop.dtos;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.util.List;
@@ -10,16 +9,18 @@ public class MedicationDto extends RepresentationModel<MedicationDto> {
     private String name;
     private String dosage;
     private String description;
-    private List<MedicationOrderDto> medicationOrders;
+    private double cost;
+    private List<Long> medicationOrdersId;
 
     protected MedicationDto(){}
 
-    public MedicationDto(Long id, String name, String dosage, String description, List<MedicationOrderDto> medicationOrders) {
+    public MedicationDto(Long id, String name, String dosage, String description, double cost, List<Long> medicationOrdersId) {
         this.id = id;
         this.name = name;
         this.dosage = dosage;
         this.description = description;
-        this.medicationOrders = medicationOrders;
+        this.cost = cost;
+        this.medicationOrdersId = medicationOrdersId;
     }
 
     public Long getId() {
@@ -54,22 +55,23 @@ public class MedicationDto extends RepresentationModel<MedicationDto> {
         this.description = description;
     }
 
-    public List<MedicationOrderDto> getMedicationOrders() {
-        return medicationOrders;
+    public List<Long> getMedicationOrdersId() {
+        return medicationOrdersId;
     }
 
-    public void setMedicationOrders(List<MedicationOrderDto> medicationOrders) {
-        this.medicationOrders = medicationOrders;
+    public void setMedicationOrdersId(List<Long> medicationOrdersId) {
+        this.medicationOrdersId = medicationOrdersId;
     }
 
     @Override
     public String toString() {
-        return "\nMedicationDto{" +
-                "\n    id=" + id +
-                ",\n    name='" + name + '\'' +
-                ",\n    dosage='" + dosage + '\'' +
-                ",\n    description='" + description + '\'' +
-                ",\n    medicationOrders=" + medicationOrders +
-                "\n }";
+        return "MedicationDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", dosage='" + dosage + '\'' +
+                ", description='" + description + '\'' +
+                ", cost=" + cost +
+                ", medicationOrdersId=" + medicationOrdersId +
+                '}';
     }
 }
